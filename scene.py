@@ -3,7 +3,20 @@ from manim import *
 import random
 
 #class Tape(Scene):
-class Tape(MovingCameraScene):
+def __init__(self, **kwargs):
+    ZoomedScene.__init__(
+        self,
+        zoom_factor=0.3,
+        zoomed_display_height=1,
+        zoomed_display_width=6,
+        image_frame_stroke_width=20,
+        zoomed_camera_config={
+            "default_frame_stroke_width": 3,
+            },
+        **kwargs
+    )
+
+class Tape(ZoomedScene):
     def construct(self):
 
         # coordinate x,y,z and builtins
@@ -18,12 +31,13 @@ class Tape(MovingCameraScene):
         TAPE_TOP_LINE_START = (-30,1,0)
         TAPE_TOP_LINE_END =   (30,1,0)
         tapeTopLine = Line(TAPE_TOP_LINE_START,TAPE_TOP_LINE_END);
-        self.play(ShowCreation(tapeTopLine))
 
         TAPE_BOTTOM_LINE_START = (-30,-1,0)
         TAPE_BOTTOM_LINE_END =   (30,-1,0)
         tapeBottomLine = Line(TAPE_BOTTOM_LINE_START,TAPE_BOTTOM_LINE_END);
-        self.play(ShowCreation(tapeBottomLine))
+
+        tapeLines = VGroup(tapeTopLine, tapeBottomLine)
+        self.play(ShowCreation(tapeLines))
 
         # seed tape cells with random bits
         #random.seed(42)
@@ -40,15 +54,43 @@ class Tape(MovingCameraScene):
         self.wait(1)
 
         # zoom out by shrinking the tape
-        tape = VGroup(tapeTopLine, tapeBottomLine, cells)
+        tape = VGroup(tapeLines, cells)
         self.play(ScaleInPlace(tape, 0.25))
         self.wait(2)
 
+        zoomed_camera_text = Text("Tape Head", color=PURPLE).scale(.25)
+        zoomed_display_text = Text("Zoomed Tape View", color=RED).scale(.25)
 
+        zoomed_camera = self.zoomed_camera
+        zoomed_display = self.zoomed_display
+        zoomed_camera_frame = zoomed_camera.frame
+        zoomed_display_frame = zoomed_display.display_frame
 
-         # Save the state of camera
-        #self.camera.frame.save_state()
+        zoomed_camera_frame.move_to(Dot()) # set initial camera focus at origin
+        zoomed_camera_frame.set_color(PURPLE)
+        zoomed_display_frame.set_color(RED)
+        zoomed_display.shift(DOWN)
 
-        # restore saved camera state
-        #self.play(Restore(self.camera.frame))
-        #self.wait(2)
+        zoom_display_rect = BackgroundRectangle(zoomed_display, fill_opacity=0, buff=MED_SMALL_BUFF)
+        self.add_foreground_mobject(zoom_display_rect)
+        unfold_camera = UpdateFromFunc(zoom_display_rect, lambda rect: rect.replace(zoomed_display))
+        zoomed_camera_text.next_to(zoomed_camera_frame, DOWN)
+        self.play(ShowCreation(zoomed_camera_frame), FadeInFrom(zoomed_camera_text, direction=DOWN))
+        self.activate_zooming()
+
+        self.play(self.get_zoomed_display_pop_out_animation(), unfold_camera)
+        zoomed_display_text.next_to(zoomed_display_frame, DOWN)
+        self.play(FadeInFrom(zoomed_display_text, direction=DOWN))
+
+        # remove the zoom text labels
+        self.play(FadeOut(zoomed_camera_text))
+        self.play(FadeOut(zoomed_display_text))
+
+        # animate shift zoom camera left over tape
+        self.play(zoomed_camera_frame.animate.shift(8 * LEFT), run_time=3.0)
+        self.wait(2)
+
+        # remove camera
+        #self.play(self.get_zoomed_display_pop_out_animation(), unfold_camera, rate_func=lambda t: smooth(1 - t))
+        #self.play(Uncreate(zoomed_display_frame), FadeOut(frame))
+        #self.wait()
