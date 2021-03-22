@@ -8,3 +8,5 @@
 
 python3 -m manim tape.py WhatIsAComputerProgram -qk
 python3 -m manim tape.py TapeIntro -qk
+
+#python3 -m manim tape.py TapeIntro -pql

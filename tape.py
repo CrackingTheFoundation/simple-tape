@@ -31,18 +31,11 @@ class TapeIntro(ZoomedScene):
 
         # 256 tape cells (random binary values)
         cells = Tex("1", "0", "1", "0", "0", "1", "0", "1", "1", "0", "1", "0", "0", "0", "0", "1", "0", "1", "1", "1", "1", "0", "0", "0", "1", "1", "0", "1", "0", "0", "1", "0", "0", "0", "1", "0", "0", "0", "1", "0", "1", "1", "1", "0", "1", "0", "1", "1", "0", "0", "0", "0", "1", "0", "0", "1", "1", "0", "1", "1", "0", "1", "0", "0", "1", "1", "1", "0", "1", "0", "0", "0", "0", "0", "0", "1", "0", "1", "0", "1", "0", "1", "1", "0", "0", "0", "1", "1", "0", "1", "0", "1", "0", "0", "0", "1", "1", "0", "0", "1", "0", "0", "1", "1", "1", "1", "0", "0", "1", "0", "0", "0", "1", "0", "1", "0", "1", "0", "0", "0", "1", "0", "1", "0", "0", "0", "1", "0", "1", "1", "0", "1", "0", "1", "1", "1", "1", "1", "0", "0", "0", "1", "0", "1", "0", "0", "0", "0", "1", "0", "0", "0", "1", "0", "0", "1", "1", "1", "1", "1", "1", "0", "1", "0", "1", "1", "0", "0", "1", "0", "0", "1", "1", "0", "0", "1", "0", "0", "0", "1", "0", "1", "0", "0", "0", "0", "1", "1", "0", "1", "1", "0", "0", "1", "0", "0", "0", "1", "1", "0", "0", "0", "1", "1", "1", "1", "0", "1", "0", "0", "1", "0", "1", "0", "1", "1", "1", "0", "1", "1", "1", "0", "0", "0", "1", "0", "1", "1", "1", "1", "0", "1", "1", "1", "1", "0", "0", "0", "1", "1", "0", "1", "1", "0", "0", "1", "1", "1", "1", "0", "1", "1", "0", "0", "0", "0"
-        )
-        cells.set_color_by_tex("1",YELLOW)
-        #for i in range(len(cells)):
-        #    # use labeled color or Hexadecimal color (e.g. "#DC28E2")
-        #    if cells[i].get_tex_string() == "1":
-        #        cells[i].set_color(YELLOW)
-        #    else:
-        #        cells[i].set_color(WHITE)
+        ).set_color_by_tex("1",YELLOW)
 
         # points in x,y,z center screen is 0,0
-        tapeTopLine = Line(Dot(cells[0].get_center()).shift(UP),Dot(cells[255].get_center()).shift(UP));
-        tapeBottomLine = Line(Dot(cells[0].get_center()).shift(DOWN),Dot(cells[255].get_center()).shift(DOWN));
+        tapeTopLine = Line(Dot(cells[0].get_center()).shift(UP).shift(cells[0].get_width()*LEFT),Dot(cells[255].get_center()).shift(UP).shift(cells[0].get_width()*RIGHT));
+        tapeBottomLine = Line(Dot(cells[0].get_center()).shift(DOWN).shift(cells[0].get_width()*LEFT),Dot(cells[255].get_center()).shift(DOWN).shift(cells[0].get_width()*RIGHT));
 
         tapeLines = VGroup(tapeTopLine, tapeBottomLine)
         self.play(ShowCreation(tapeLines))
@@ -52,12 +45,15 @@ class TapeIntro(ZoomedScene):
 
         # zoom out by shrinking the tape
         tape = VGroup(tapeLines, cells)
-        self.play(ScaleInPlace(tape, 0.25))
+        TAPE_SHRINK=.25
+        self.play(ScaleInPlace(tape, TAPE_SHRINK))
+        self.wait(1)
+        self.play(tape.animate.to_edge(LEFT))
         self.wait(2)
 
-        zoomed_camera_text = Text("Tape Head", color=PURPLE).scale(.25)
-        tape_head_arrow = Text("\u2191", color=PURPLE).scale(.25)
-        zoomed_display_text = Text("Zoomed Tape Head View", color=RED).scale(.25)
+        zoomed_camera_text = Text("Tape Head", color=PURPLE).scale(TAPE_SHRINK * 1.25)
+        tape_head_arrow = Text("\u2191", color=PURPLE).scale(TAPE_SHRINK)
+        zoomed_display_text = Text("Zoomed Tape Head View", color=RED).scale(TAPE_SHRINK * 1.25)
 
         # construct zoomed camera and a display frame
         # reference https://docs.manim.community/en/v0.1.1/examples.html#movingframebox
@@ -96,14 +92,26 @@ class TapeIntro(ZoomedScene):
         #self.add_sound("assets/mixkit-reel-to-reel-fast-forward-1096.wav",gain=-8) # will synch this up in post
         self.wait(2)
 
-        # todo consider using https://docs.manim.community/en/v0.1.1/examples.html#movingframebox
-        # to show binary values can form arbitrary symbols
+        # write ABCD\0 to tape cells
+        # 01000001 01000010 01000011 01000100 00000000
+        data = "0100000101000010010000110100010000000000"
+        for i in range(len(data)):
+            # simulate charging write head in needed to write data
+            if cells[i].get_tex_string() != data[i]:
+                tape_head_arrow.set_color(RED)
+            else:
+                tape_head_arrow.set_color(PURPLE)
+            # write the data
+            value = Tex(data[i]).scale(TAPE_SHRINK).move_to(cells[i]).set_color_by_tex("1",YELLOW)
+            self.play(ReplacementTransform(cells[i], value), run_time=.25)
+            if i < 255:
+                self.play(tape_head.animate.move_to(cells[i+1]), run_time=.25)
 
-        blank_cells = Tex("0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"
-        ).scale(.25)
-
-        self.play(ReplacementTransform(cells, blank_cells))
+        self.play(tape_head.animate.move_to(cells[0]), run_time=1)
         self.wait(2)
+
+        # binary values can form arbitrary symbols
+        # using https://docs.manim.community/en/v0.1.1/examples.html#movingframebox
 
         # remove camera display
         #self.play(self.get_zoomed_display_pop_out_animation(), unfold_camera, rate_func=lambda t: smooth(1 - t))
