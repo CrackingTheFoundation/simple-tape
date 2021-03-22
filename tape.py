@@ -99,11 +99,10 @@ class TapeIntro(ZoomedScene):
             # simulate charging write head in needed to write data
             if cells[i].get_tex_string() != data[i]:
                 tape_head_arrow.set_color(RED)
-            else:
-                tape_head_arrow.set_color(PURPLE)
             # write the data
             value = Tex(data[i]).scale(TAPE_SHRINK).move_to(cells[i]).set_color_by_tex("1",YELLOW)
             self.play(ReplacementTransform(cells[i], value), run_time=.25)
+            tape_head_arrow.set_color(PURPLE)
             if i < 255:
                 self.play(tape_head.animate.move_to(cells[i+1]), run_time=.25)
 
