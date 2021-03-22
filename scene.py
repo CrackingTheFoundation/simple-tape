@@ -1,7 +1,5 @@
 from manim import *
 
-import random
-
 #class Tape(Scene):
 def __init__(self, **kwargs):
     ZoomedScene.__init__(
@@ -39,10 +37,16 @@ class Tape(ZoomedScene):
         tapeLines = VGroup(tapeTopLine, tapeBottomLine)
         self.play(ShowCreation(tapeLines))
 
-        # seed tape cells with random bits
-        #random.seed(42)
+        # todo consider using https://docs.manim.community/en/v0.1.1/examples.html#movingframebox
+        # for cell head
 
-        cells = Tex("0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")
+        # 256 tape cells
+        #cells = Tex("0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0")
+
+        # 256 tape cells (random binary values)
+        cells = Tex("1", "0", "1", "0", "0", "1", "0", "1", "1", "0", "1", "0", "0", "0", "0", "1", "0", "1", "1", "1", "1", "0", "0", "0", "1", "1", "0", "1", "0", "0", "1", "0", "0", "0", "1", "0", "0", "0", "1", "0", "1", "1", "1", "0", "1", "0", "1", "1", "0", "0", "0", "0", "1", "0", "0", "1", "1", "0", "1", "1", "0", "1", "0", "0", "1", "1", "1", "0", "1", "0", "0", "0", "0", "0", "0", "1", "0", "1", "0", "1", "0", "1", "1", "0", "0", "0", "1", "1", "0", "1", "0", "1", "0", "0", "0", "1", "1", "0", "0", "1", "0", "0", "1", "1", "1", "1", "0", "0", "1", "0", "0", "0", "1", "0", "1", "0", "1", "0", "0", "0", "1", "0", "1", "0", "0", "0", "1", "0", "1", "1", "0", "1", "0", "1", "1", "1", "1", "1", "0", "0", "0", "1", "0", "1", "0", "0", "0", "0", "1", "0", "0", "0", "1", "0", "0", "1", "1", "1", "1", "1", "1", "0", "1", "0", "1", "1", "0", "0", "1", "0", "0", "1", "1", "0", "0", "1", "0", "0", "0", "1", "0", "1", "0", "0", "0", "0", "1", "1", "0", "1", "1", "0", "0", "1", "0", "0", "0", "1", "1", "0", "0", "0", "1", "1", "1", "1", "0", "1", "0", "0", "1", "0", "1", "0", "1", "1", "1", "0", "1", "1", "1", "0", "0", "0", "1", "0", "1", "1", "1", "1", "0", "1", "1", "1", "1", "0", "0", "0", "1", "1", "0", "1", "1", "0", "0", "1", "1", "1", "1", "0", "1", "1", "0", "0", "0", "0"
+        )#.scale(1.5)
+
         for i in range(len(cells)):
             # use labeled color or Hexadecimal color (e.g. "#DC28E2")
             if cells[i].get_tex_string() == "1":
@@ -59,14 +63,15 @@ class Tape(ZoomedScene):
         self.wait(2)
 
         zoomed_camera_text = Text("Tape Head", color=PURPLE).scale(.25)
-        zoomed_display_text = Text("Zoomed Tape View", color=RED).scale(.25)
+        tape_head_arrow = Text("\u2191", color=PURPLE).scale(.25)
+        zoomed_display_text = Text("Zoomed Tape Head View", color=RED).scale(.25)
 
         zoomed_camera = self.zoomed_camera
         zoomed_display = self.zoomed_display
         zoomed_camera_frame = zoomed_camera.frame
         zoomed_display_frame = zoomed_display.display_frame
 
-        zoomed_camera_frame.move_to(Dot()) # set initial camera focus at origin
+        zoomed_camera_frame.move_to(cells[128]) # set initial camera focus at origin
         zoomed_camera_frame.set_color(PURPLE)
         zoomed_display_frame.set_color(RED)
         zoomed_display.shift(DOWN)
@@ -75,7 +80,12 @@ class Tape(ZoomedScene):
         self.add_foreground_mobject(zoom_display_rect)
         unfold_camera = UpdateFromFunc(zoom_display_rect, lambda rect: rect.replace(zoomed_display))
         zoomed_camera_text.next_to(zoomed_camera_frame, DOWN)
+
+        tape_head_arrow.next_to(cells[128], DOWN/4)
         self.play(ShowCreation(zoomed_camera_frame), FadeInFrom(zoomed_camera_text, direction=DOWN))
+        self.play(ShowCreation(tape_head_arrow))
+        tape_head = VGroup(tape_head_arrow, zoomed_camera_frame)
+
         self.activate_zooming()
 
         self.play(self.get_zoomed_display_pop_out_animation(), unfold_camera)
@@ -84,10 +94,10 @@ class Tape(ZoomedScene):
 
         # remove the zoom text labels
         self.play(FadeOut(zoomed_camera_text))
-        self.play(FadeOut(zoomed_display_text))
+        #self.play(FadeOut(zoomed_display_text))
 
         # animate shift zoom camera left over tape
-        self.play(zoomed_camera_frame.animate.shift(8 * LEFT), run_time=3.0)
+        self.play(tape_head.animate.move_to(cells[0]), run_time=3.0)
         self.wait(2)
 
         # remove camera
