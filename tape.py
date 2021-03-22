@@ -1,20 +1,32 @@
 from manim import *
 
-#class Tape(Scene):
-def __init__(self, **kwargs):
-    ZoomedScene.__init__(
-        self,
-        zoom_factor=0.3,
-        zoomed_display_height=1,
-        zoomed_display_width=6,
-        image_frame_stroke_width=20,
-        zoomed_camera_config={
-            "default_frame_stroke_width": 3,
-            },
-        **kwargs
-    )
+class WhatIsAComputerProgram(ZoomedScene):
+    def construct(self):
 
-class Tape(ZoomedScene):
+        question=Text("What is a computer program?")
+        self.add(question)
+        self.wait(2)
+
+        self.play(question.animate.shift(2*UP))
+
+        trailingThought=Text("and...")
+        trailingThought.next_to(question,DOWN)
+        self.add(trailingThought)
+
+        followUp=Text("")
+        followUp.next_to(trailingThought,DOWN)
+        self.add(followUp)
+
+        self.play(Transform(followUp,Text("What makes them so vulnerable?")))
+        self.wait(2)
+
+        self.play(Transform(followUp,Text("What makes them so buggy?")))
+        self.wait(2)
+
+        self.play(Transform(followUp,Text("What makes them so complex?")))
+        self.wait(2)
+
+class TapeIntro(ZoomedScene):
     def construct(self):
 
         # 256 tape cells (random binary values)
@@ -48,6 +60,7 @@ class Tape(ZoomedScene):
         zoomed_display_text = Text("Zoomed Tape Head View", color=RED).scale(.25)
 
         # construct zoomed camera and a display frame
+        # reference https://docs.manim.community/en/v0.1.1/examples.html#movingframebox
         zoomed_camera = self.zoomed_camera
         zoomed_display = self.zoomed_display
         zoomed_camera_frame = zoomed_camera.frame
@@ -78,8 +91,9 @@ class Tape(ZoomedScene):
         # remove the zoom camera text label before moving
         self.play(FadeOut(zoomed_camera_text))
 
-        # animate shift zoom camera left over tape (rewind tape to first cell)
-        self.play(tape_head.animate.move_to(cells[0]), run_time=3.0)
+        # animate shift zoom camera left over tape (rewind tape to first cell
+        self.play(tape_head.animate.move_to(cells[0]), run_time=3)
+        #self.add_sound("assets/mixkit-reel-to-reel-fast-forward-1096.wav",gain=-8) # will synch this up in post
         self.wait(2)
 
         # todo consider using https://docs.manim.community/en/v0.1.1/examples.html#movingframebox
