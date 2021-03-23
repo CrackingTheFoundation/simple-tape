@@ -87,9 +87,17 @@ class TapeIntro(ZoomedScene):
         # remove the zoom camera text label before moving
         self.play(FadeOut(zoomed_camera_text))
 
-        # animate shift zoom camera left over tape (rewind tape to first cell
+        # animate shift zoom camera left over tape (rewind tape to first cell)
         self.play(tape_head.animate.move_to(cells[0]), run_time=3)
         #self.add_sound("assets/mixkit-reel-to-reel-fast-forward-1096.wav",gain=-8) # will synch this up in post
+        self.wait(2)
+
+        # animate shift zoom camera right over tape
+        self.play(tape_head.animate.move_to(cells[64]), run_time=1.5)
+        self.wait(1)
+
+        # animate shift zoom camera left over tape (rewind tape to first cell)
+        self.play(tape_head.animate.move_to(cells[0]), run_time=1.5)
         self.wait(2)
 
         # write ABCD\0 to tape cells
@@ -98,10 +106,12 @@ class TapeIntro(ZoomedScene):
         for i in range(len(data)):
             # simulate charging write head in needed to write data
             if cells[i].get_tex_string() != data[i]:
-                tape_head_arrow.set_color(RED)
+                tape_head_arrow.set_color(YELLOW)
             # write the data
             value = Tex(data[i]).scale(TAPE_SHRINK).move_to(cells[i]).set_color_by_tex("1",YELLOW)
+            tape = VGroup(tapeLines, cells, value)
             self.play(ReplacementTransform(cells[i], value), run_time=.25)
+            cells[i].set(tex_string=data[i])
             tape_head_arrow.set_color(PURPLE)
             if i < 255:
                 self.play(tape_head.animate.move_to(cells[i+1]), run_time=.25)
@@ -109,10 +119,66 @@ class TapeIntro(ZoomedScene):
         self.play(tape_head.animate.move_to(cells[0]), run_time=1)
         self.wait(2)
 
-        # binary values can form arbitrary symbols
-        # using https://docs.manim.community/en/v0.1.1/examples.html#movingframebox
+        # remove zoom display
+        self.play(self.get_zoomed_display_pop_out_animation(), unfold_camera, rate_func=lambda t: smooth(1 - t))
+        self.play(Uncreate(zoomed_display_frame), FadeOut(zoomed_display_text), FadeOut(zoomed_camera_frame))
+        self.wait()
 
-        # remove camera display
-        #self.play(self.get_zoomed_display_pop_out_animation(), unfold_camera, rate_func=lambda t: smooth(1 - t))
-        #self.play(Uncreate(zoomed_display_frame), FadeOut(frame))
-        #self.wait()
+        # grow the tape back to being large
+        machine_state = VGroup(tape, tape_head_arrow)
+        #small_machine_state = machine_state.save_state()
+        self.play(ScaleInPlace(machine_state, 1/TAPE_SHRINK), run_time=.25)
+        self.play(machine_state.animate.to_edge(LEFT), run_time=.25)
+        #large_machine_state = machine_state.save_state()
+        self.wait(1)
+
+        byte1 = VGroup(cells[0:8])
+        byte1_framebox = SurroundingRectangle(byte1, buff=.1)
+
+        byte2 = VGroup(cells[8:16])
+        byte2_framebox = SurroundingRectangle(byte2, buff=.1)
+
+        byte3 = VGroup(cells[16:24])
+        byte3_framebox = SurroundingRectangle(byte3, buff=.1)
+
+        byte4 = VGroup(cells[24:32])
+        byte4_framebox = SurroundingRectangle(byte4, buff=.1)
+
+        byte5 = VGroup(cells[32:40])
+        byte5_framebox = SurroundingRectangle(byte5, buff=.1)
+
+        # create framebox on byte1
+        self.play(ShowCreation(byte1_framebox))
+        self.wait()
+
+        # convert byte1 to ASCII and move to byte2
+        self.play(ReplacementTransform(byte1,Tex("A").move_to(byte1)), tape_head_arrow.animate.next_to(byte1, DOWN))
+        self.wait()
+        self.play(ReplacementTransform(byte1_framebox,byte2_framebox))
+        self.wait()
+
+        # convert byte2 to ASCII and move to byte3
+        self.play(ReplacementTransform(byte2,Tex("B").move_to(byte2)))
+        self.wait()
+        self.play(ReplacementTransform(byte2_framebox,byte3_framebox))
+        self.wait()
+
+        # convert byte3 to ASCII and move to byte4
+        self.play(ReplacementTransform(byte3,Tex("C").move_to(byte3)))
+        self.wait()
+        self.play(ReplacementTransform(byte3_framebox,byte4_framebox))
+        self.wait()
+
+        # convert byte4 to ASCII and move to byte5
+        self.play(ReplacementTransform(byte4,Tex("D").move_to(byte4)))
+        self.wait()
+        self.play(ReplacementTransform(byte4_framebox,byte5_framebox))
+        self.wait()
+
+        # convert byte5 to ASCII
+        self.play(ReplacementTransform(byte5,Tex(r"$\backslash 0$").move_to(byte5)))
+        self.wait()
+
+        # copy down idea
+        #byte1_framebox_copy = byte1_framebox.copy().shift(DOWN)
+        #self.play(TransformFromCopy(byte1_framebox, byte1_framebox_copy))
