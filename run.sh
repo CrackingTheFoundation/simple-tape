@@ -6,6 +6,12 @@
 # -a renderes all scenes instead of just the specified scene
 # -i renders to gif instead of mp4
 
-python3 -m manim tape.py WhatIsAComputerProgram -qk
-#python3 -m manim tape.py TapeIntro -qk
-#python3 -m manim tape.py TapeDataRepresentations -qk
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	/usr/local/opt/python@3.9/bin/python3.9 -m manim tape.py WhatIsAComputerProgram -qk
+	#/usr/local/opt/python@3.9/bin/python3.9 -m manim tape.py TapeIntro -qk
+	#/usr/local/opt/python@3.9/bin/python3.9 -m manim tape.py TapeDataRepresentations -qk
+else
+	python3 -m manim tape.py WhatIsAComputerProgram -qk
+	#python3 -m manim tape.py TapeIntro -qk
+	#python3 -m manim tape.py TapeDataRepresentations -qk
+fi
